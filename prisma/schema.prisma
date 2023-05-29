@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  password       String
+  role           Role            @default(USER)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  Farmer         Farmer?
+  AgroInputStore AgroInputStore?
+}
+
+enum Role {
+  USER
+  ADMIN
+  STORE
+}
+
+model Farmer {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  name      String
+  landSize  Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User    @relation(fields: [userId], references: [id])
+  Order Order[]
+}
+
+model AgroInputStore {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id         Int      @id @default(autoincrement())
+  categoryId Int
+  name       String
+  price      Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  category        Category         @relation(fields: [categoryId], references: [id])
+  stock           Stock[]
+  fertilizerSeeds FertilizerSeed[]
+  seedUsages      SeedUsage[]
+  order           Order[]
+}
+
+model Fertilizer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fertilizerSeeds FertilizerSeed[]
+}
+
+model FertilizerSeed {
+  id           Int      @id @default(autoincrement())
+  fertilizerId Int
+  seedId       Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  fertilizer Fertilizer @relation(fields: [fertilizerId], references: [id])
+  seed       Product    @relation(fields: [seedId], references: [id])
+}
+
+model SeedUsage {
+  id           Int      @id @default(autoincrement())
+  productId    Int
+  landSize     Float
+  seedsPerAcre Float
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Stock {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  quantity  Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  farmerId  Int
+  productId Int
+  quantity  Float
+  isPaid    Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farmer  Farmer  @relation(fields: [farmerId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
