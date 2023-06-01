@@ -3,7 +3,7 @@ import catchAsync from '../utils/catchAsync';
 import { User } from '@prisma/client';
 import authService from '../service/auth.service';
 import tokenService from '../service/token.service';
-import Config from '../config/global.config';
+import userService from '../service/user.service';
 
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
@@ -11,11 +11,19 @@ const login = catchAsync(async (req, res) => {
     email,
     password,
   );
-  const tokens = tokenService.generateToken(
-    user.id,
-    Config.jwt.accessExpirationMinutes,
+  const token = tokenService.generateToken(user.id);
+  res.status(httpStatus.OK).send({ user, token });
+});
+
+const register = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
+  const { password: _, ...rest } = await userService.createUser(
+    email,
+    password,
+    'USER',
   );
-  res.status(httpStatus.OK).send({ user, tokens });
+  const token = tokenService.generateToken(rest.id);
+  res.status(httpStatus.CREATED).send({ rest, token });
 });
 
 const resetPassword = catchAsync(async (req, res) => {
@@ -30,4 +38,5 @@ const resetPassword = catchAsync(async (req, res) => {
 export default {
   login,
   resetPassword,
+  register,
 };

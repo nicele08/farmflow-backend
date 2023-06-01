@@ -6,7 +6,7 @@ import Config from '../config/global.config';
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.send({ message: 'Welcome to the API!' });
+  res.send('Welcome to the FarmFlow API!');
 });
 
 const defaultRoutes = [
@@ -28,7 +28,7 @@ const devRoutes = [
 ];
 
 defaultRoutes.forEach((route) => {
-  router.use(route.path, route.route);
+  router.use(`/api${route.path}`, route.route);
 });
 
 if (Config.env === 'development') {

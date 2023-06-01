@@ -4,7 +4,7 @@ import Config from '../config/global.config';
 
 const generateToken = (
   userId: number,
-  expires: Moment = moment().add(1, 'day'),
+  expires: Moment = moment().add(Config.jwt.accessExpirationMinutes, 'minutes'),
   secret = Config.jwt.secret,
 ): string => {
   const payload = {

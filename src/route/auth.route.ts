@@ -12,6 +12,12 @@ router.post(
   authController.login,
 );
 
+router.post(
+  '/register',
+  validate(authValidation.login),
+  authController.register,
+);
+
 router.patch(
   '/reset-password',
   auth(),
