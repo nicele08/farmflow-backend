@@ -17,6 +17,7 @@ const loginUserWithEmailAndPassword = async (
   const user = await userService.getUserByEmail(email, [
     'id',
     'email',
+    'name',
     'password',
     'role',
     'createdAt',

@@ -9,6 +9,7 @@ const getUserByEmail = async <Key extends keyof User>(
   email: string,
   keys: Key[] = [
     'id',
+    'name',
     'email',
     'password',
     'role',
@@ -23,6 +24,7 @@ const getUserByEmail = async <Key extends keyof User>(
 };
 
 const createUser = async (
+  name: string,
   email: string,
   password: string,
   role?: Role,
@@ -33,6 +35,7 @@ const createUser = async (
         email,
         password: await encryptPassword(password),
         role,
+        name,
       },
     });
     return createdUser;
@@ -53,6 +56,7 @@ const getUserById = async <Key extends keyof User>(
   id: number,
   keys: Key[] = [
     'id',
+    'name',
     'email',
     'password',
     'role',
@@ -69,9 +73,14 @@ const getUserById = async <Key extends keyof User>(
 const updateUserById = async <Key extends keyof User>(
   userId: number,
   updateBody: Prisma.UserUpdateInput,
-  keys: Key[] = ['id', 'email', 'role'] as Key[],
+  keys: Key[] = ['id', 'email', 'role', 'name'] as Key[],
 ): Promise<Pick<User, Key> | null> => {
-  const user = await getUserById(userId, ['id', 'email', 'role']);
+  const user = await getUserById(userId, [
+    'id',
+    'email',
+    'role',
+    'name',
+  ]);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
