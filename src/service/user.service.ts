@@ -32,7 +32,7 @@ const createUser = async (
   try {
     const createdUser = await prisma.user.create({
       data: {
-        email,
+        email: email.trim().toLowerCase(),
         password: await encryptPassword(password),
         role,
         name,

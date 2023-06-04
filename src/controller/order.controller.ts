@@ -6,12 +6,18 @@ import { User } from '@prisma/client';
 export default class OrderController {
   static create = catchAsync(async (req, res) => {
     const { id: farmerId } = req.user as User;
-    const { productId, quantity, landSize } = req.body;
+    const {
+      productId,
+      quantity,
+      landSize,
+      isPaid = false,
+    } = req.body;
     const order = await OrderService.create({
       farmerId,
       productId,
       quantity,
       landSize,
+      isPaid,
     });
     res.status(httpStatus.CREATED).send(order);
   });
@@ -44,9 +50,12 @@ export default class OrderController {
 
   static getAll = catchAsync(async (req, res) => {
     const { page = 1, limit = 5 } = req.query;
+    const { id, role } = req.user as User;
+    const userId = ['ADMIN', 'STORE'].includes(role) ? undefined : id;
     const orders = await OrderService.getAll(
       Number(page),
       Number(limit),
+      userId,
     );
     res.status(httpStatus.OK).send(orders);
   });

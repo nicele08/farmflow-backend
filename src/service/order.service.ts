@@ -10,17 +10,35 @@ export default class OrderService {
     productId,
     quantity,
     landSize,
+    isPaid = false,
   }: Pick<
     Order,
-    'farmerId' | 'productId' | 'quantity' | 'landSize'
+    'farmerId' | 'productId' | 'quantity' | 'landSize' | 'isPaid'
   >): Promise<Order> => {
     try {
+      const farmer = await prisma.user.findUnique({
+        where: {
+          id: farmerId,
+        },
+      });
+      if (!farmer) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Farmer not found');
+      }
+      const product = await prisma.product.findUnique({
+        where: {
+          id: productId,
+        },
+      });
+      if (!product) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+      }
       const createdOrder = await prisma.order.create({
         data: {
           farmerId,
           productId,
           quantity,
           landSize,
+          isPaid,
         },
       });
       return createdOrder;
@@ -65,6 +83,10 @@ export default class OrderService {
           isPaid,
           status,
         },
+        include: {
+          farmer: true,
+          product: true,
+        }
       });
       return updatedOrder;
     } catch (error) {
@@ -86,11 +108,29 @@ export default class OrderService {
   static getAll = async (
     page: number = 1,
     limit: number = 5,
+    farmerId?: number,
   ): Promise<Order[]> => {
     const skip = (page - 1) * limit;
-    return prisma.order.findMany({
+    let where: Record<string, any> = {};
+    if (farmerId) {
+      where.farmerId = farmerId;
+    }
+    const orders = await prisma.order.findMany({
       skip,
       take: limit,
+      where,
+      include: {
+        farmer: true,
+        product: true,
+      },
     });
+
+    return orders.map((order) => ({
+      ...order,
+      farmer: {
+        ...order.farmer,
+        password: undefined,
+      },
+    }));
   };
 }

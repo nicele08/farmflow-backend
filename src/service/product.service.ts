@@ -80,6 +80,7 @@ export default class ProductService {
       'category',
       'maxPerAcre',
       'perAcre',
+      'seedIds',
       'quantity',
       'createdAt',
       'updatedAt',
@@ -158,6 +159,7 @@ export default class ProductService {
       'category',
       'maxPerAcre',
       'perAcre',
+      'seedIds',
       'quantity',
       'createdAt',
       'updatedAt',
@@ -195,6 +197,7 @@ export default class ProductService {
 
     return {
       quantity,
+      maxQuantity: maxProductQuantity,
       price: quantity * product.price,
     };
   };

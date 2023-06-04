@@ -15,7 +15,7 @@ const validate =
       .validate(obj);
     if (error) {
       const errorMessage = error.details
-        .map((details) => details.message)
+        .map((details) => details.message.replace(/"/g, ''))
         .join(', ');
       return next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
     }

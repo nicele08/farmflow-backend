@@ -14,15 +14,18 @@ const loginUserWithEmailAndPassword = async (
   email: string,
   password: string,
 ): Promise<Omit<User, 'password'>> => {
-  const user = await userService.getUserByEmail(email, [
-    'id',
-    'email',
-    'name',
-    'password',
-    'role',
-    'createdAt',
-    'updatedAt',
-  ]);
+  const user = await userService.getUserByEmail(
+    email.trim().toLowerCase(),
+    [
+      'id',
+      'email',
+      'name',
+      'password',
+      'role',
+      'createdAt',
+      'updatedAt',
+    ],
+  );
 
   if (!user || !(await isPasswordMatch(password, user.password))) {
     throw new ApiError(

@@ -7,6 +7,14 @@ const login = {
   }),
 };
 
+const register = {
+  body: Joi.object().keys({
+    name: Joi.string().required().label('Name'),
+    email: Joi.string().required().email().label('Email'),
+    password: Joi.string().required().label('Password'),
+  }),
+};
+
 const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
@@ -28,4 +36,5 @@ const resetPassword = {
 export default {
   login,
   resetPassword,
+  register,
 };

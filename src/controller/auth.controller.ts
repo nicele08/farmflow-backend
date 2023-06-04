@@ -16,14 +16,15 @@ const login = catchAsync(async (req, res) => {
 });
 
 const register = catchAsync(async (req, res) => {
-  const { email, password } = req.body;
-  const { password: _, ...rest } = await userService.createUser(
+  const { email, password, name } = req.body;
+  const { password: _, ...user } = await userService.createUser(
+    name,
     email,
     password,
     'USER',
   );
-  const token = tokenService.generateToken(rest.id);
-  res.status(httpStatus.CREATED).send({ rest, token });
+  const token = tokenService.generateToken(user.id);
+  res.status(httpStatus.CREATED).send({ user, token });
 });
 
 const resetPassword = catchAsync(async (req, res) => {

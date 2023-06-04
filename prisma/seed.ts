@@ -18,6 +18,7 @@ async function main() {
     }
     await prisma.user.create({
       data: {
+        name: 'Admin',
         email: 'admin@farmflow.com',
         role: 'ADMIN',
         password: await encryptPassword('Admin123'),

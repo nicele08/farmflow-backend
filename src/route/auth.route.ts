@@ -14,7 +14,7 @@ router.post(
 
 router.post(
   '/register',
-  validate(authValidation.login),
+  validate(authValidation.register),
   authController.register,
 );
 
