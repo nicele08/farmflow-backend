@@ -7,13 +7,13 @@ const prisma = new PrismaClient();
 async function main() {
   logger.info('Seeding database...');
   try {
-    const user = await prisma.user.findFirst({
-      where: { email: 'admin@fromflow.com' },
+    const admin = await prisma.user.findFirst({
+      where: { email: 'admin@farmflow.com' },
     });
 
-    if (user) {
+    if (admin) {
       await prisma.user.delete({
-        where: { id: user.id },
+        where: { id: admin.id },
       });
     }
     await prisma.user.create({
@@ -24,6 +24,43 @@ async function main() {
         password: await encryptPassword('Admin123'),
       },
     });
+
+    const farmer = await prisma.user.findFirst({
+      where: { email: 'gatera@example.com' },
+    });
+
+    if (farmer) {
+      await prisma.user.delete({
+        where: { id: farmer.id },
+      });
+    }
+    await prisma.user.create({
+      data: {
+        name: 'Edmond Gatera',
+        email: 'gatera@example.com',
+        role: 'USER',
+        password: await encryptPassword('Gatera123'),
+      },
+    });
+
+    const agro = await prisma.user.findFirst({
+      where: { email: 'john12@farmflow.com' },
+    });
+
+    if (agro) {
+      await prisma.user.delete({
+        where: { id: agro.id },
+      });
+    }
+    await prisma.user.create({
+      data: {
+        name: 'John Kabera',
+        email: 'john12@farmflow.com',
+        role: 'STORE',
+        password: await encryptPassword('John123'),
+      },
+    });
+
     logger.info('Seeding completed!');
   } catch (error) {
     logger.error(error);
